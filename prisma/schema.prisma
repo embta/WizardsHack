@@ -1,0 +1,72 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Request {
+  id            String       @id @default(cuid())
+  title         String
+  clientName    String
+  insuranceType String
+  description   String?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  quotations  Quotation[]
+  comparisons Comparison[]
+}
+
+model Quotation {
+  id          String  @id @default(cuid())
+  requestId   String
+  request     Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  insurerName String
+  insurerLogo String?
+
+  // Core financials
+  premium      Float
+  deductible   Float?
+  sumInsured   Float?
+  policyTerm   String?
+  paymentTerms String?
+
+  // Structured coverage data (stored as JSON strings)
+  coverages          String? // JSON: [{name, limit, sublimit, included}]
+  exclusions         String? // JSON: [{item, description}]
+  conditions         String? // JSON: [{item, description}]
+  additionalBenefits String? // JSON: [{name, description}]
+
+  // Raw extracted text (from PDF/Excel upload)
+  rawText String?
+
+  // AI-generated analysis (cached)
+  aiPros    String? // JSON array of strings
+  aiCons    String? // JSON array of strings
+  aiScore   Float?
+  aiSummary String?
+
+  // Source tracking
+  sourceType String // "upload" | "manual"
+  sourceFile String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Comparison {
+  id        String  @id @default(cuid())
+  requestId String
+  request   Request @relation(fields: [requestId], references: [id], onDelete: Cascade)
+
+  executiveSummary String? // JSON
+  detailedAnalysis String? // JSON
+  costBenefit      String? // JSON
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -1,0 +1,14 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "dev",
+      "runtimeExecutable": "/Users/mohamedessam/.nvm/versions/node/v20.20.2/bin/node",
+      "runtimeArgs": ["/Users/mohamedessam/firsttech-hackathon-wizards/node_modules/.bin/next", "dev", "--turbopack"],
+      "port": 3000,
+      "env": {
+        "PATH": "/Users/mohamedessam/.nvm/versions/node/v20.20.2/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+      }
+    }
+  ]
+}
