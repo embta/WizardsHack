@@ -31,6 +31,9 @@ export default function NewQuotationPage() {
     sumInsured: "",
     policyTerm: "",
     paymentTerms: "",
+    memberCount: "",
+    tpaName: "",
+    tpaRating: "",
     coverages: [] as CoverageItem[],
     exclusions: [] as ExclusionItem[],
   });
@@ -62,6 +65,9 @@ export default function NewQuotationPage() {
           sumInsured: String(extracted.sumInsured || ""),
           policyTerm: extracted.policyTerm || "",
           paymentTerms: extracted.paymentTerms || "",
+          memberCount: String(extracted.memberCount || ""),
+          tpaName: extracted.tpaName || "",
+          tpaRating: String(extracted.tpaRating || ""),
           coverages: extracted.coverages || [],
           exclusions: extracted.exclusions || [],
         });
@@ -96,6 +102,9 @@ export default function NewQuotationPage() {
           sumInsured: form.sumInsured ? parseFloat(form.sumInsured) : null,
           policyTerm: form.policyTerm || null,
           paymentTerms: form.paymentTerms || null,
+          memberCount: form.memberCount ? parseInt(form.memberCount) : null,
+          tpaName: form.tpaName || null,
+          tpaRating: form.tpaRating ? parseFloat(form.tpaRating) : null,
           coverages: form.coverages.length > 0 ? form.coverages : null,
           exclusions: form.exclusions.length > 0 ? form.exclusions : null,
           sourceType: mode === "review" ? "upload" : "manual",
@@ -341,6 +350,41 @@ export default function NewQuotationPage() {
                   placeholder="e.g. Annual, Quarterly"
                   className="border-sky-200 focus:border-sky-400"
                 />
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sky-900 font-medium">Member Count</Label>
+                  <Input
+                    type="number"
+                    value={form.memberCount}
+                    onChange={(e) => setForm({ ...form, memberCount: e.target.value })}
+                    placeholder="e.g. 850"
+                    className="border-sky-200 focus:border-sky-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sky-900 font-medium">TPA Name</Label>
+                  <Input
+                    value={form.tpaName}
+                    onChange={(e) => setForm({ ...form, tpaName: e.target.value })}
+                    placeholder="e.g. NAS TPA, NEXTCARE"
+                    className="border-sky-200 focus:border-sky-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sky-900 font-medium">TPA Rating (1-5)</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="5"
+                    step="0.1"
+                    value={form.tpaRating}
+                    onChange={(e) => setForm({ ...form, tpaRating: e.target.value })}
+                    placeholder="e.g. 4.5"
+                    className="border-sky-200 focus:border-sky-400"
+                  />
+                </div>
               </div>
             </TabsContent>
 

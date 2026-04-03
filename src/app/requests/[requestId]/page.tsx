@@ -90,7 +90,7 @@ export default function RequestDetailPage() {
       });
       if (res.ok) {
         toast.success("Comparison generated!");
-        router.push(`/requests/${requestId}/compare/executive`);
+        router.push(`/requests/${requestId}/compare/detailed`);
       } else {
         const data = await res.json();
         toast.error(data.error || "Comparison failed.");
@@ -222,7 +222,7 @@ export default function RequestDetailPage() {
 
         {hasComparison && (
           <>
-            <Link href={`/requests/${requestId}/compare/executive`}>
+            <Link href={`/requests/${requestId}/compare/detailed`}>
               <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 cursor-pointer">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 View Comparison
@@ -309,14 +309,14 @@ export default function RequestDetailPage() {
                       <div className="rounded-lg bg-sky-50/80 p-3">
                         <p className="text-[11px] font-medium uppercase tracking-wider text-sky-500">Premium</p>
                         <p className="text-lg font-bold text-sky-800 mt-0.5">
-                          {q.premium.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                          {`AED ${q.premium.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
                         </p>
                       </div>
                       {q.deductible && (
                         <div className="rounded-lg bg-slate-50 p-3">
                           <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Deductible</p>
                           <p className="font-semibold text-slate-700 mt-0.5">
-                            {q.deductible.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                            {`AED ${q.deductible.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
                           </p>
                         </div>
                       )}
@@ -324,7 +324,7 @@ export default function RequestDetailPage() {
                         <div className="rounded-lg bg-slate-50 p-3">
                           <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Sum Insured</p>
                           <p className="font-semibold text-slate-700 mt-0.5">
-                            {q.sumInsured.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                            {`AED ${q.sumInsured.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
                           </p>
                         </div>
                       )}

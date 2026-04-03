@@ -10,6 +10,9 @@ Schema:
   "sumInsured": number | null - the total sum insured / coverage limit,
   "policyTerm": "string | null - e.g. '12 months', '1 year'",
   "paymentTerms": "string | null - e.g. 'annual', 'quarterly', 'monthly'",
+  "memberCount": number | null - the number of members/employees covered,
+  "tpaName": "string | null - the Third Party Administrator name (e.g. 'NAS TPA', 'NEXTCARE', 'MedNet')",
+  "tpaRating": number | null - the TPA/medical network quality rating from 1-5,
   "coverages": [
     {
       "name": "string - coverage name",
