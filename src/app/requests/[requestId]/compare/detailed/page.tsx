@@ -13,7 +13,7 @@ import {
   TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
-  ArrowLeft, FileDown, Check, X, AlertTriangle, ArrowUpDown,
+  ArrowLeft, FileDown, Check, X, AlertTriangle, ArrowUpDown, Star,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
@@ -29,6 +29,9 @@ interface Quotation {
   sumInsured: number | null;
   policyTerm: string | null;
   paymentTerms: string | null;
+  memberCount: number | null;
+  tpaName: string | null;
+  tpaRating: number | null;
   coverages: string | null;
   exclusions: string | null;
   conditions: string | null;
@@ -132,36 +135,22 @@ export default function DetailedViewPage() {
           <h1 className="text-3xl font-bold tracking-tight text-sky-950">{request.title}</h1>
           <p className="text-sky-700/60 mt-1">{request.clientName} &middot; {request.insuranceType}</p>
         </div>
-        <div className="flex gap-1 bg-sky-100/60 p-1 rounded-lg border border-sky-200">
-          <Link
-            href={`/requests/${requestId}/compare/executive`}
-            className="px-4 py-2 text-sm font-medium text-sky-500 hover:text-sky-800 cursor-pointer"
-          >
-            Executive
-          </Link>
-          <Link
-            href={`/requests/${requestId}/compare/detailed`}
-            className="px-4 py-2 text-sm font-medium bg-white rounded-md shadow-sm text-sky-900 cursor-pointer"
-          >
-            Detailed
-          </Link>
-        </div>
       </div>
 
-      <Tabs defaultValue="financials" className="w-full">
+      <Tabs defaultValue="overall" className="w-full">
         <TabsList className="mb-5">
-          <TabsTrigger value="financials" className="cursor-pointer">Financials</TabsTrigger>
+          <TabsTrigger value="overall" className="cursor-pointer">Overall</TabsTrigger>
           <TabsTrigger value="coverages" className="cursor-pointer">Coverage Matrix</TabsTrigger>
           <TabsTrigger value="exclusions" className="cursor-pointer">Exclusions</TabsTrigger>
           <TabsTrigger value="differences" className="cursor-pointer">Key Differences</TabsTrigger>
           <TabsTrigger value="risk" className="cursor-pointer">Risk & Value</TabsTrigger>
         </TabsList>
 
-        {/* Financials Tab */}
-        <TabsContent value="financials">
+        {/* Overall Tab */}
+        <TabsContent value="overall">
           <Card className="border-sky-100 shadow-sm">
             <CardHeader>
-              <CardTitle className="text-sky-950">Financial Comparison</CardTitle>
+              <CardTitle className="text-sky-950">Overall Comparison</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="overflow-x-auto">
@@ -189,48 +178,44 @@ export default function DetailedViewPage() {
                       })}
                     </TableRow>
                     <TableRow className="border-sky-50">
-                      <TableCell className="font-medium text-sky-900">Deductible</TableCell>
-                      {quotations.map((q) => {
-                        const vals = quotations.filter((x) => x.deductible).map((x) => x.deductible!);
-                        const isLowest = q.deductible !== null && q.deductible === Math.min(...vals);
-                        return (
-                          <TableCell key={q.id} className={`text-center ${isLowest ? "bg-emerald-50 text-emerald-700 font-bold" : ""}`}>
-                            {q.deductible ? q.deductible.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) : "-"}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                    <TableRow className="border-sky-50">
-                      <TableCell className="font-medium text-sky-900">Sum Insured</TableCell>
-                      {quotations.map((q) => {
-                        const vals = quotations.filter((x) => x.sumInsured).map((x) => x.sumInsured!);
-                        const isHighest = q.sumInsured !== null && q.sumInsured === Math.max(...vals);
-                        return (
-                          <TableCell key={q.id} className={`text-center ${isHighest ? "bg-emerald-50 text-emerald-700 font-bold" : ""}`}>
-                            {q.sumInsured ? q.sumInsured.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }) : "-"}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                    <TableRow className="border-sky-50">
-                      <TableCell className="font-medium text-sky-900">Policy Term</TableCell>
+                      <TableCell className="font-medium text-sky-900">Member Count</TableCell>
                       {quotations.map((q) => (
-                        <TableCell key={q.id} className="text-center">{q.policyTerm || "-"}</TableCell>
+                        <TableCell key={q.id} className="text-center">
+                          {q.memberCount ? q.memberCount.toLocaleString() : "-"}
+                        </TableCell>
                       ))}
                     </TableRow>
                     <TableRow className="border-sky-50">
-                      <TableCell className="font-medium text-sky-900">Payment Terms</TableCell>
+                      <TableCell className="font-medium text-sky-900">TPA</TableCell>
                       {quotations.map((q) => (
-                        <TableCell key={q.id} className="text-center">{q.paymentTerms || "-"}</TableCell>
+                        <TableCell key={q.id} className="text-center">
+                          {q.tpaName || "-"}
+                        </TableCell>
                       ))}
                     </TableRow>
                     <TableRow className="border-sky-50">
-                      <TableCell className="font-medium text-sky-900">AI Score</TableCell>
+                      <TableCell className="font-medium text-sky-900">Medical Network Rating</TableCell>
                       {quotations.map((q) => {
-                        const isHighest = q.aiScore !== null && q.aiScore === Math.max(...quotations.map((x) => x.aiScore || 0));
+                        const rating = q.tpaRating;
                         return (
-                          <TableCell key={q.id} className={`text-center ${isHighest ? "bg-emerald-50 text-emerald-700 font-bold" : ""}`}>
-                            {q.aiScore !== null ? `${q.aiScore}/100` : "-"}
+                          <TableCell key={q.id} className="text-center">
+                            {rating !== null && rating !== undefined ? (
+                              <div className="flex items-center justify-center gap-1">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                  <Star
+                                    key={star}
+                                    className={`h-4 w-4 ${
+                                      star <= Math.round(rating)
+                                        ? "fill-amber-400 text-amber-400"
+                                        : "text-sky-200"
+                                    }`}
+                                  />
+                                ))}
+                                <span className="ml-1 text-sm text-sky-600">{rating.toFixed(1)}</span>
+                              </div>
+                            ) : (
+                              "-"
+                            )}
                           </TableCell>
                         );
                       })}

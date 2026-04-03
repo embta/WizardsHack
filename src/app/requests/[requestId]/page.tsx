@@ -90,7 +90,7 @@ export default function RequestDetailPage() {
       });
       if (res.ok) {
         toast.success("Comparison generated!");
-        router.push(`/requests/${requestId}/compare/executive`);
+        router.push(`/requests/${requestId}/compare/detailed`);
       } else {
         const data = await res.json();
         toast.error(data.error || "Comparison failed.");
@@ -222,7 +222,7 @@ export default function RequestDetailPage() {
 
         {hasComparison && (
           <>
-            <Link href={`/requests/${requestId}/compare/executive`}>
+            <Link href={`/requests/${requestId}/compare/detailed`}>
               <Button variant="outline" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 cursor-pointer">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 View Comparison

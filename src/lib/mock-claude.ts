@@ -49,6 +49,9 @@ const AL_SAGR_EXTRACTION: ExtractedQuotation = {
   sumInsured: 250000,
   policyTerm: "12 months",
   paymentTerms: "Annual",
+  memberCount: 850,
+  tpaName: "NAS TPA",
+  tpaRating: 3.2,
   coverages: [
     { name: "Inpatient & Daycare", limit: 250000, sublimit: null, included: true, notes: "AED 250,000 pppa. Shared ward (4-bed). AED 250 deductible per encounter, annual cap AED 750" },
     { name: "ICU", limit: 250000, sublimit: null, included: true, notes: "Covered within annual limit" },
@@ -107,6 +110,9 @@ const ORIENT_ALLIANZ_EXTRACTION: ExtractedQuotation = {
   sumInsured: 300000,
   policyTerm: "12 months",
   paymentTerms: "Annual",
+  memberCount: 910,
+  tpaName: "NEXTCARE",
+  tpaRating: 3.8,
   coverages: [
     { name: "Inpatient & Daycare", limit: 300000, sublimit: null, included: true, notes: "AED 300,000 pppa. Semi-private room (2-bed). AED 200 deductible per encounter, annual cap AED 500" },
     { name: "ICU", limit: 300000, sublimit: null, included: true, notes: "Fully covered within annual limit" },
@@ -173,6 +179,9 @@ const DAMAN_EXTRACTION: ExtractedQuotation = {
   sumInsured: 500000,
   policyTerm: "12 months",
   paymentTerms: "Annual",
+  memberCount: 900,
+  tpaName: "Daman In-house",
+  tpaRating: 4.5,
   coverages: [
     { name: "Inpatient & Daycare", limit: 500000, sublimit: null, included: true, notes: "AED 500,000 pppa. Private room. AED 150 deductible per encounter, annual cap AED 300" },
     { name: "ICU", limit: 500000, sublimit: null, included: true, notes: "Fully covered, no sub-limit" },
@@ -236,6 +245,9 @@ const SUKOON_EXTRACTION: ExtractedQuotation = {
   sumInsured: 500000,
   policyTerm: "12 months",
   paymentTerms: "Annual",
+  memberCount: 880,
+  tpaName: "MedNet",
+  tpaRating: 3.5,
   coverages: [
     { name: "Inpatient & Daycare", limit: 500000, sublimit: null, included: true, notes: "AED 500,000 pppa. Private room. No deductible" },
     { name: "ICU", limit: 500000, sublimit: null, included: true, notes: "Fully covered, no sub-limit" },
@@ -298,6 +310,9 @@ const AXA_EXTRACTION: ExtractedQuotation = {
   sumInsured: 1000000,
   policyTerm: "12 months",
   paymentTerms: "Annual or Semi-Annual",
+  memberCount: 920,
+  tpaName: "AXA In-house",
+  tpaRating: 4.7,
   coverages: [
     { name: "Inpatient & Daycare", limit: 1000000, sublimit: null, included: true, notes: "AED 1,000,000 pppa. Private suite / single room. No deductible" },
     { name: "ICU", limit: 1000000, sublimit: null, included: true, notes: "Fully covered, unlimited days" },
@@ -364,6 +379,9 @@ const FALLBACK_EXTRACTION: ExtractedQuotation = {
   sumInsured: 250000,
   policyTerm: "12 months",
   paymentTerms: "Annual",
+  memberCount: 850,
+  tpaName: "N/A",
+  tpaRating: 3.0,
   coverages: [
     { name: "Inpatient Treatment", limit: 250000, sublimit: null, included: true, notes: "Standard coverage" },
     { name: "Outpatient Treatment", limit: 250000, sublimit: null, included: true, notes: "AED 20 copay" },
@@ -732,30 +750,51 @@ function buildMockComparison(quotations: QuotationRef[]): ComparisonResult {
 // EXECUTIVE SUMMARY MOCK
 // ===================================================================
 
+function getBulletForInsurer(name: string): string {
+  if (name.includes("Al Sagr")) return `Al Sagr (AED 923K) is cheapest but has lowest limit (AED 250K), 4-bed ward, and no dental/optical`;
+  if (name.includes("Orient") || name.includes("Allianz")) return `Orient/Allianz (AED 1.25M) offers solid mid-range coverage with international reach via NEXTCARE`;
+  if (name.includes("Sukoon") || name.includes("Takaful")) return `Sukoon Takaful (AED 1.85M) leads with zero deductible, best dental (AED 3,500), and Sharia compliance`;
+  if (name.includes("Daman")) return `Daman (AED 2.19M) provides widest network (2,500+), shortest pre-existing wait (3 months), and wellness program`;
+  if (name.includes("AXA") || name.includes("GIG Gulf")) return `AXA (AED 3.4M) is the premium choice with AED 1M limit, zero copay, and only 7 exclusions`;
+  return `${name} provides standard coverage at moderate pricing`;
+}
+
+function getCoverageDescForInsurer(name: string): string {
+  if (name.includes("AXA") || name.includes("GIG Gulf")) return "AED 1,000,000 limit, zero copay/deductible";
+  if (name.includes("Daman")) return "AED 500,000 limit, widest network (2,500+)";
+  if (name.includes("Sukoon") || name.includes("Takaful")) return "AED 500,000 limit, zero deductible";
+  if (name.includes("Orient") || name.includes("Allianz")) return "AED 300,000 limit, international coverage";
+  if (name.includes("Al Sagr")) return "AED 250,000 limit, basic coverage";
+  return "Standard coverage";
+}
+
 function buildMockExecutive(quotations: QuotationRef[]): ExecutiveSummary {
   const scored = quotations.map((q) => ({
     ...q,
     score: getScoreForInsurer(q.insurerName),
+    premium: getPremiumForInsurer(q.insurerName),
   }));
   scored.sort((a, b) => b.score - a.score);
   const best = scored[0];
+  const cheapest = [...scored].sort((a, b) => {
+    const pa = parseFloat(a.premium.replace(/[^0-9]/g, ""));
+    const pb = parseFloat(b.premium.replace(/[^0-9]/g, ""));
+    return pa - pb;
+  })[0];
+  const bestCoverage = scored[0]; // highest score = best coverage
   const count = quotations.length;
 
   return {
     recommendation: `We recommend proceeding with ${best.insurerName} for ALAMRY GROUP's employee health coverage program, delivering the strongest balance of comprehensive benefits, network quality, and overall value at a score of ${best.score}/100.`,
     keyMetrics: [
-      { label: "Lowest Premium", value: "AED 923,500", winner: "Al Sagr National Insurance Co." },
-      { label: "Best Coverage", value: "AED 1,000,000 limit, zero copay/deductible", winner: "AXA Gulf Insurance (GIG Gulf)" },
-      { label: "Best Value", value: "Score 78/100 - widest network, shortest wait", winner: "Daman National Health Insurance Co." },
+      { label: "Lowest Premium", value: cheapest.premium, winner: cheapest.insurerName },
+      { label: "Best Coverage", value: getCoverageDescForInsurer(bestCoverage.insurerName), winner: bestCoverage.insurerName },
+      { label: "Best Value", value: `Score ${best.score}/100`, winner: best.insurerName },
       { label: "Recommended Option", value: `Score ${best.score}/100`, winner: best.insurerName },
     ],
-    narrative: `After comprehensive analysis of ${count} competing quotations for ALAMRY GROUP's group medical insurance program, ${best.insurerName} emerges as the recommended provider. The evaluation assessed premium competitiveness, coverage breadth, network quality, deductible/copay structures, and employee experience factors across all options. Premium quotations ranged from AED 923,500 (Al Sagr) to AED 3,404,000 (AXA), with significant variation in coverage quality. The recommended option delivers the optimal balance of comprehensive health protection and cost sustainability for a workforce of this scale.`,
+    narrative: `After comprehensive analysis of ${count} competing quotations for ALAMRY GROUP's group medical insurance program, ${best.insurerName} emerges as the recommended provider. The evaluation assessed premium competitiveness, coverage breadth, network quality, deductible/copay structures, and employee experience factors across all options. Premium quotations ranged from ${cheapest.premium} (${cheapest.insurerName.split(" ")[0]}) to ${scored[scored.length - 1].premium} (${scored[scored.length - 1].insurerName.split(" ")[0]}), with significant variation in coverage quality. The recommended option delivers the optimal balance of comprehensive health protection and cost sustainability for a workforce of this scale.`,
     bulletPoints: [
-      `Al Sagr (AED 923K) is cheapest but has lowest limit (AED 250K), 4-bed ward, and no dental/optical`,
-      `Orient/Allianz (AED 1.25M) offers solid mid-range coverage with international reach via NEXTCARE`,
-      `Sukoon Takaful (AED 1.85M) leads with zero deductible, best dental (AED 3,500), and Sharia compliance`,
-      `Daman (AED 2.19M) provides widest network (2,500+), shortest pre-existing wait (3 months), and wellness program`,
-      `AXA (AED 3.4M) is the premium choice with AED 1M limit, zero copay, and only 7 exclusions`,
+      ...scored.map((s) => getBulletForInsurer(s.insurerName)),
       `Recommend negotiating the top 2 options for 8-12% discount before final commitment`,
     ],
   };

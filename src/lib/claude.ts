@@ -1,7 +1,7 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { mockCallClaude, mockCallClaudeJSON } from "./mock-claude";
 
-const USE_MOCK = process.env.USE_MOCK_CLAUDE === "true";
+const USE_MOCK = process.env.USE_MOCK_CLAUDE === "true" || !process.env.ANTHROPIC_API_KEY;
 
 function getAnthropicClient(): Anthropic {
   const apiKey = process.env.ANTHROPIC_API_KEY;

@@ -34,6 +34,11 @@ model Quotation {
   sumInsured   Float?
   policyTerm   String?
   paymentTerms String?
+  memberCount  Int?
+
+  // TPA / Medical Network
+  tpaName      String?
+  tpaRating    Float?   // Rating out of 5
 
   // Structured coverage data (stored as JSON strings)
   coverages          String? // JSON: [{name, limit, sublimit, included}]

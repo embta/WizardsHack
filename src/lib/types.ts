@@ -63,6 +63,9 @@ export interface ExtractedQuotation {
   sumInsured?: number;
   policyTerm?: string;
   paymentTerms?: string;
+  memberCount?: number;
+  tpaName?: string;
+  tpaRating?: number;
   coverages: CoverageItem[];
   exclusions: ExclusionItem[];
   conditions: ConditionItem[];

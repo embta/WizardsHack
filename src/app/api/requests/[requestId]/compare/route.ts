@@ -7,7 +7,8 @@ import {
   EXECUTIVE_SYSTEM_PROMPT,
   buildExecutivePrompt,
 } from "@/lib/prompts/compare";
-import type { ComparisonResult, ExecutiveSummary } from "@/lib/types";
+import { ANALYZE_SYSTEM_PROMPT, buildAnalyzePrompt } from "@/lib/prompts/analyze";
+import type { ComparisonResult, ExecutiveSummary, QuotationAnalysis } from "@/lib/types";
 
 export async function POST(
   _req: NextRequest,
@@ -30,6 +31,40 @@ export async function POST(
         { error: "Need at least 2 quotations to compare" },
         { status: 400 }
       );
+    }
+
+    // Auto-analyze any quotations missing pros/cons
+    for (const q of request.quotations) {
+      if (!q.aiPros || !q.aiCons) {
+        const analysis = await callClaudeJSON<QuotationAnalysis>(
+          ANALYZE_SYSTEM_PROMPT,
+          buildAnalyzePrompt({
+            insurerName: q.insurerName,
+            premium: q.premium,
+            deductible: q.deductible,
+            sumInsured: q.sumInsured,
+            policyTerm: q.policyTerm,
+            coverages: q.coverages,
+            exclusions: q.exclusions,
+            conditions: q.conditions,
+            additionalBenefits: q.additionalBenefits,
+          })
+        );
+        await prisma.quotation.update({
+          where: { id: q.id },
+          data: {
+            aiPros: JSON.stringify(analysis.pros),
+            aiCons: JSON.stringify(analysis.cons),
+            aiScore: analysis.score,
+            aiSummary: analysis.summary,
+          },
+        });
+        // Update in-memory for comparison prompt
+        q.aiPros = JSON.stringify(analysis.pros);
+        q.aiCons = JSON.stringify(analysis.cons);
+        q.aiScore = analysis.score;
+        q.aiSummary = analysis.summary;
+      }
     }
 
     // Generate comparison
