@@ -851,22 +851,18 @@ export async function mockCallClaudeJSON<T>(
   switch (callType) {
     case "extract": {
       const docId = detectDocument(userMessage);
-      console.log(`[MOCK] Extraction detected document: ${docId}`);
       return extractionMap[docId] as T;
     }
     case "analyze": {
       const insurer = detectInsurerForAnalysis(userMessage);
-      console.log(`[MOCK] Analysis detected insurer: ${insurer}`);
       return analysisMap[insurer] as T;
     }
     case "compare": {
       const quotations = parseQuotationsFromMessage(userMessage);
-      console.log(`[MOCK] Comparison for ${quotations.length} quotations`);
       return buildMockComparison(quotations) as T;
     }
     case "executive": {
       const quotations = parseQuotationsFromExecutiveMessage(userMessage);
-      console.log(`[MOCK] Executive summary for ${quotations.length} quotations`);
       return buildMockExecutive(quotations) as T;
     }
   }

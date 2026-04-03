@@ -26,7 +26,10 @@ dev.db
 dev.db-journal
 
 # claude local
-.claude/settings.local.json
+.claude/
+
+# typescript
+tsconfig.tsbuildinfo
 
 # vercel
 .vercel
