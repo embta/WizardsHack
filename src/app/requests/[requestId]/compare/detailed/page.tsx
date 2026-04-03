@@ -172,7 +172,7 @@ export default function DetailedViewPage() {
                         const isLowest = q.premium === Math.min(...quotations.map((x) => x.premium));
                         return (
                           <TableCell key={q.id} className={`text-center ${isLowest ? "bg-emerald-50 text-emerald-700 font-bold" : ""}`}>
-                            {q.premium.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                            {`AED ${q.premium.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
                           </TableCell>
                         );
                       })}

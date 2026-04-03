@@ -351,6 +351,41 @@ export default function NewQuotationPage() {
                   className="border-sky-200 focus:border-sky-400"
                 />
               </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label className="text-sky-900 font-medium">Member Count</Label>
+                  <Input
+                    type="number"
+                    value={form.memberCount}
+                    onChange={(e) => setForm({ ...form, memberCount: e.target.value })}
+                    placeholder="e.g. 850"
+                    className="border-sky-200 focus:border-sky-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sky-900 font-medium">TPA Name</Label>
+                  <Input
+                    value={form.tpaName}
+                    onChange={(e) => setForm({ ...form, tpaName: e.target.value })}
+                    placeholder="e.g. NAS TPA, NEXTCARE"
+                    className="border-sky-200 focus:border-sky-400"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-sky-900 font-medium">TPA Rating (1-5)</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    max="5"
+                    step="0.1"
+                    value={form.tpaRating}
+                    onChange={(e) => setForm({ ...form, tpaRating: e.target.value })}
+                    placeholder="e.g. 4.5"
+                    className="border-sky-200 focus:border-sky-400"
+                  />
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="coverages" className="mt-5">

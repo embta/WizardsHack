@@ -309,14 +309,14 @@ export default function RequestDetailPage() {
                       <div className="rounded-lg bg-sky-50/80 p-3">
                         <p className="text-[11px] font-medium uppercase tracking-wider text-sky-500">Premium</p>
                         <p className="text-lg font-bold text-sky-800 mt-0.5">
-                          {q.premium.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                          {`AED ${q.premium.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
                         </p>
                       </div>
                       {q.deductible && (
                         <div className="rounded-lg bg-slate-50 p-3">
                           <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Deductible</p>
                           <p className="font-semibold text-slate-700 mt-0.5">
-                            {q.deductible.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                            {`AED ${q.deductible.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
                           </p>
                         </div>
                       )}
@@ -324,7 +324,7 @@ export default function RequestDetailPage() {
                         <div className="rounded-lg bg-slate-50 p-3">
                           <p className="text-[11px] font-medium uppercase tracking-wider text-slate-400">Sum Insured</p>
                           <p className="font-semibold text-slate-700 mt-0.5">
-                            {q.sumInsured.toLocaleString("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 })}
+                            {`AED ${q.sumInsured.toLocaleString("en-US", { maximumFractionDigits: 0 })}`}
                           </p>
                         </div>
                       )}
